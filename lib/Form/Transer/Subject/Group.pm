@@ -26,8 +26,8 @@ sub check_test
 
     my $passed = 0;
 
-    printf STDERR "DEBUG: Running test for group %s\n",
-        ( $self->{alias} ? $self->{alias} : "(unknown)" );
+#     printf STDERR "DEBUG: Running test for group %s\n",
+#         ( $self->{alias} ? $self->{alias} : "(unknown)" );
 
     my %errors;
     for my $subject ( @{$self->{subjects}} ) {

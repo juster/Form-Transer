@@ -21,8 +21,8 @@ sub check_test
 
     my %errors;
 
-    printf STDERR "DEBUG: Running test for $self->{name}=%s\n",
-        ( defined $self->{value} ? $self->{value} : 'UNDEF' );
+#     printf STDERR "DEBUG: Running test for $self->{name}=%s\n",
+#         ( defined $self->{value} ? $self->{value} : 'UNDEF' );
 
     eval {
         $test->conduct( $self->{value} );

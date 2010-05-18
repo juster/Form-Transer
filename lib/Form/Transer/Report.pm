@@ -18,36 +18,51 @@ sub value
     return $self->{values}{shift()};
 }
 
-*val = \&value;
+sub get_values
+{
+    my $self = shift;
+    my %values_copy = %{ $self->{values} };
+    return %values_copy;
+}
 
 sub ok
 {
     my ($self, $param) = @_;
-    return %$self eq '0' unless defined $param;
-    return ! exists $self->{$param};
+    return $self->error_count == 0 unless defined $param;
+    return ! exists $self->{errors}{$param};
 }
 
 sub bad
 {
     my ($self, $param) = @_;
 
-    return %$self ne '0' unless defined $param;
-    return exists $self->{$param};
+    return ! $self->ok($param);
 }
 
 sub err
 {
     my ($self, $param) = @_;
 
-    return $self->{$param};
+    return $self->{errors}{$param};
 }
 
 sub errors
 {
     my $self = shift;
+    my $limit = shift;
 
     my %is_dup;
-    return grep { ! $is_dup{$_} } values %$self;
+    my @errors = grep { ! $is_dup{$_}++ } values %{ $self->{errors} };
+
+    return @errors[ 0 .. $limit-1 ] if ( $limit && scalar @errors > $limit );
+
+    return @errors;
+}
+
+sub error_count
+{
+    my $self = shift;
+    return scalar $self->errors();
 }
 
 1;

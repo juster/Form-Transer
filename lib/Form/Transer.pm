@@ -20,7 +20,10 @@ sub new
 {
     my $class = shift;
     my ($input) = @_;
-    bless { input => $input, subjects => [ ], values => {} }, $class;
+    bless { input    => $input,
+            subjects => [ ],
+            values   => { },
+            errors   => { } }, $class;
 }
 
 # 'email' => q{ ascii email !err_email }
@@ -48,13 +51,42 @@ sub check
         %errors = ( %errors, $subject->check_test($test) );
     }
 
+    $self->{errors} = { %{ $self->{errors} }, %errors };
     return $self->{report} = Form::Transer::Report->new
-        ( errors => \%errors, values => $self->{values} );
+        ( errors => $self->{errors}, values => $self->{values} );
+}
+
+sub default
+{
+    my $self = shift;
+
+    unless ( @_ ) {
+        @_ = $self->profile;
+    }
+
+    croak 'Empty arguments to default() and no profile() available'
+        unless @_;
+
+    croak q{Invalid test descriptions in %desc, does not seem to be a hash}
+        unless @_ % 2 == 0;
+
+    while ( my ($subject, $testdesc) = splice @_, 0, 2 ) {
+        my $test    = $self->parse_test( $testdesc );
+        my $subject = $self->parse_subject( $subject );
+    }
+
+    return Form::Transer::Report->new( values => $self->{values} );
 }
 
 sub profile
 {
     return ();
+}
+
+sub param
+{
+    my $self = shift;
+    return $self->{input}->param( shift() );
 }
 
 sub get_report
@@ -92,8 +124,6 @@ sub parse_subject
             $self->{values}{$subject} = $input->param($subject);
         }
 
-        print STDERR "\$name_vals = ", Dumper($name_vals), "\n";
-
         my $group = Form::Transer::Subject::Group->new( $name_vals );
         $group->set_logic( $options{logic} ) if ( $options{logic} );
         $group->set_alias( $options{alias} ) if ( $options{alias} );
@@ -120,8 +150,14 @@ sub parse_test
     $error =~ s/\n\s*//;
     $error =~ s/\A\s+//;
 
-    my @rules = map { deploy($_) } grep { $_ ne 'set' } map { lc } grep { length }
-        split /[\s;|]+/, $desc;
+    my @rules = ( map { ( ! / \A (\w+) ( [(]\w+[)] )? \z /xms
+                          ? warn "Invalid rule definition: $1"
+                          : $2
+                            ? deploy( $1, split m{,}, $2 )
+                            : deploy( $1 )
+                         ) }
+                  grep { $_ ne 'set' } map { lc } grep { length }
+                  split /[\s;|]+/, $desc );
     unshift @rules, deploy('set');
 
     my $test = Form::Transer::Test->new( [ @rules ], $error );

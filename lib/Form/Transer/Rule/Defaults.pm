@@ -20,6 +20,8 @@ alias 'bool' => 'boolean';
 decree number => sub { Scalar::Util::looks_like_number($_) },
     requires  => 'Scalar::Util';
 
+decree above  => sub { $_ > $_[ARGS][0] };
+
 decree int    => qr/\A[-+]?\p{Number}+\z/;
 decree uint   => qr/\A\p{Number}+\z/;
 decree ascii  => qr/\A\p{AsciiHexDigit}+\z/;

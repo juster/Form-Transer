@@ -10,7 +10,7 @@ use Form::Transer::Rule;
 use Form::Transer::Test qw(:constants);
 
 our @EXPORT;
-our @EXPORT_OK = qw(alias decree deploy STATE ARGS BYPASS);
+our @EXPORT_OK   = qw(alias decree deploy STATE ARGS BYPASS);
 our %EXPORT_TAGS = ( all       => [ @EXPORT_OK ],
                      constants => [ qw/ STATE ARGS BYPASS / ] );
 our %_RULE_BOOK;

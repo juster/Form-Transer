@@ -8,7 +8,15 @@ lib/Form/Transer/Test.pm
 lib/Form/Transer/Error.pm
 lib/Form/Transer/Report.pm
 lib/Form/Transer/Rule/Book.pm
-lib/Form/Transer/Rule/List.pm
+lib/Form/Transer/Rule/Defaults.pm
+lib/Form/Transer/Subject.pm
+lib/Form/Transer/Subject/Group.pm
 t/00-load.t
-t/01-rules.t
 t/pod.t
+t/00-load.t
+t/01-simple.t
+t/10-usphone.t
+t/11-uszip.t
+t/boilerplate.t
+t/pod.t
+Makefile.PL

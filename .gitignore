@@ -1,3 +1,9 @@
 *~
 *.org
 *.old
+Build
+_build
+blib
+*.tar.gz
+Makefile.PL
+META.yml
